@@ -1,0 +1,28 @@
+from bge import logic, events
+
+def move_character():
+    cont = logic.getCurrentController()
+    player = cont.owner
+
+    speed = 0.5
+    rotation_speed = 0.08
+
+    keys = logic.keyboard.events
+
+    # Move forward
+    if keys[events.WKEY] == logic.KX_INPUT_ACTIVE:
+        player.applyMovement((0, 0, speed), True)
+
+    # Move backward
+    if keys[events.SKEY] == logic.KX_INPUT_ACTIVE:
+        player.applyMovement((0, 0, -speed), True)
+
+    # Rotate left
+    if keys[events.AKEY] == logic.KX_INPUT_ACTIVE:
+        player.applyRotation((0, rotation_speed, 0), True)
+
+    # Rotate right
+    if keys[events.DKEY] == logic.KX_INPUT_ACTIVE:
+        player.applyRotation((0, -rotation_speed, 0), True)
+
+move_character()

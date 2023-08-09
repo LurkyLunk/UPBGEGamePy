@@ -1,0 +1,22 @@
+from bge import logic, events
+
+def switch_camera():
+    cont = logic.getCurrentController()
+    owner = cont.owner
+    keyboard = logic.keyboard
+    
+    # Check if the Tab key was just pressed
+    if logic.KX_INPUT_JUST_ACTIVATED == keyboard.events[events.TABKEY]:
+        # Get a reference to the current scene
+        scene = logic.getCurrentScene()
+        
+        # If the first-person camera is currently the active camera, switch to the third-person camera
+        if scene.active_camera == scene.objects['CameraFP']:
+            scene.active_camera = scene.objects['CameraTP']
+            
+        # If the third-person camera is currently the active camera, switch to the first-person camera
+        elif scene.active_camera == scene.objects['CameraTP']:
+            scene.active_camera = scene.objects['CameraFP']
+
+# Call the function
+switch_camera()

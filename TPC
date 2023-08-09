@@ -1,0 +1,54 @@
+from bge import logic, events
+import math
+
+# Constants
+SENSITIVITY = 0.001
+RADIUS = 10
+
+def rotate_camera():
+    """Rotates the camera based on mouse movement."""
+    cont = logic.getCurrentController()
+    camera = cont.owner
+    parent = camera.parent
+
+    mouse = logic.mouse
+    width = logic.render.getWindowWidth()
+    height = logic.render.getWindowHeight()
+
+    # Get the difference in pixels from the middle of the screen
+    mouse_x = width // 2 - mouse.position[0] * width
+    mouse_y = height // 2 - mouse.position[1] * height
+
+    # Update the spherical coordinates based on mouse movement
+    update_spherical_coordinates(camera, mouse_x, mouse_y)
+
+    # Update the Cartesian coordinates of the camera
+    update_cartesian_coordinates(camera, parent)
+
+    # Always look at the parent
+    camera.alignAxisToVect(parent.getVectTo(camera)[1], 2, 1.0)
+
+    # Center the mouse
+    logic.mouse.position = 0.5, 0.5
+
+def update_spherical_coordinates(camera, mouse_x, mouse_y):
+    """Updates the spherical coordinates of the camera based on mouse movement."""
+    camera['theta'] += mouse_x * SENSITIVITY  # horizontal angle
+    camera['phi'] += mouse_y * SENSITIVITY  # vertical angle
+
+    # Clamp the vertical angle to avoid flipping the camera upside down
+    camera['phi'] = min(max(camera['phi'], 0.01), math.pi - 0.01)
+
+def update_cartesian_coordinates(camera, parent):
+    """Updates the Cartesian coordinates of the camera."""
+    camera.worldPosition.x = parent.worldPosition.x + RADIUS * math.sin(camera['phi']) * math.cos(camera['theta'])
+    camera.worldPosition.y = parent.worldPosition.y + RADIUS * math.sin(camera['phi']) * math.sin(camera['theta'])
+    camera.worldPosition.z = parent.worldPosition.z + RADIUS * math.cos(camera['phi'])
+
+# Initialize spherical coordinates if not already done
+if 'theta' not in logic.getCurrentController().owner:
+    logic.getCurrentController().owner['theta'] = 0
+if 'phi' not in logic.getCurrentController().owner:
+    logic.getCurrentController().owner['phi'] = math.pi / 2
+
+rotate_camera()
