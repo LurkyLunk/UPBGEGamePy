@@ -1,0 +1,6 @@
+import bge
+
+def main(cont):
+    bge.render.showMouse(True)
+
+main(bge.logic.getCurrentController())
